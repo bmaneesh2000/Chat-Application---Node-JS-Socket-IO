@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>WebScockets 101</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+        <style>
+            body{
+                background-color: yellow;
+            }
+            #jojo{
+                position: absolute;
+                height: 400px;
+                width: 500px;
+                overflow: auto;
+            }
+#chy{
+    padding-top: 400px;
+    position: relative;
+}
+h2{
+    background-color: chartreuse;
+    text-align: center;
+
+}
+header{
+    width: 100%;
+    background-color: aqua;
+    text-align: center;
+}
+#chatmanee{
+    background-color: burlywood;
+    height: 520px;
+    width: 500px;
+    margin: auto
+}
+#send{
+    border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 8px;
+  margin: 4px 2px;
+  cursor: pointer;
+    background-color:crimson;
+}
+input[type=text] {
+  width: 80%;
+  padding: 8px 20px;
+  box-sizing: border-box;
+  border: 2px solid red;
+  border-radius: 4px;
+}
+footer{
+    background-color:palegreen;
+    margin-top: 200px;
+    margin-bottom: 20px;
+}
+#handle{
+    display:none;
+}
+        </style>
+    </head>
+    <body>
+        <header>
+        <h1 class="mt-4">Unit Test 2 - ASIGNMENT</h1>
+<p class="lead mb-3">Welcome <%= user.name %></p>
+</header>
+        <div id="chatmanee">
+            <h2>Maneesh Chat</h2>
+            <div id="chat-window">
+                <div id = "jojo">
+                <div id="output"></div>
+                <div id="feedback"></div>
+                </div>
+            </div>
+            <div id=chy>
+            <input id="handle" type="text" value=<%= user.name %> />
+            <br>
+            <input id="message" type="text" placeholder="message" />
+            <button id="send">Send</button>
+            </div>
+        </div>
+        <footer>
+        <center><a href="/users/logout" class="btn btn-secondary" style="width: 100%;">Logout</a>
+        </center></footer>
+    </body>
+    <script>
+   // Make connection
+var socket = io.connect('http://localhost:5000');
+
+// Query DOM
+var message = document.getElementById('message'),
+      handle = document.getElementById('handle'),
+      btn = document.getElementById('send'),
+      output = document.getElementById('output'),
+      feedback = document.getElementById('feedback');
+
+// Emit events
+btn.addEventListener('click', function(){
+    socket.emit('chat', {
+        message: message.value,
+        handle: handle.value
+    });
+    message.value = "";
+});
+
+message.addEventListener('keypress', function(){
+    socket.emit('typing', handle.value);
+})
+
+// Listen for events
+socket.on('chat', function(data){
+    feedback.innerHTML = '';
+    output.innerHTML += '<p><strong>' + data.handle + ': </strong>' + data.message + '</p>';
+});
+
+socket.on('typing', function(data){
+    feedback.innerHTML = '<p><em>' + data + ' is typing a message...</em></p>';
+});
+</script>
+</html>
